@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
@@ -21,9 +21,15 @@ interface IBGE_UF {
   sigla: string
 }
 
+interface IBGE_CITY {
+  nome: string
+}
+
 const CreatePoint = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [ufs, setUfs] = useState<string[]>([]);
+  const [selectedUf, setSelectedUf] = useState<string>('0');
+  const [cities, setCities] = useState<string[]>([]);
 
   useEffect(() => {
     api.get('/items').then(response => {
@@ -38,6 +44,22 @@ const CreatePoint = () => {
       setUfs(ufInitials);
     })
   }, []);
+
+  useEffect(() => {
+    if (selectedUf === '0') {
+      return;
+    }
+
+    axios.get<IBGE_CITY[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`).then(response => {
+      const cityNames = response.data.map(city => city.nome);
+
+      setCities(cityNames);
+    });
+  }, [selectedUf]);
+
+  function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) {
+    setSelectedUf(event.target.value);
+  }
 
   return (
     <div id="page-create-point">
@@ -97,7 +119,7 @@ const CreatePoint = () => {
           <div className="field-group">
             <div className="field">
               <label htmlFor="uf">Estado (UF)</label>
-              <select name="uf" id="uf">
+              <select name="uf" id="uf" onChange={handleSelectUf}>
                 <option value="0">Selecione uma UF</option>
                 {ufs.map(uf => <option key={uf} value={uf}>{uf}</option>)}
               </select>
@@ -106,6 +128,7 @@ const CreatePoint = () => {
               <label htmlFor="city">Cidade</label>
               <select name="city" id="city">
                 <option value="0">Selecione uma cidade</option>
+                {cities.map(city => <option key={city} value={city}>{city}</option>)}
               </select>
             </div>
           </div>
