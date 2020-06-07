@@ -6,6 +6,7 @@ import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import { SvgUri } from 'react-native-svg';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Points = () => {
   const navigation = useNavigation();
@@ -19,7 +20,7 @@ const Points = () => {
   }
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <TouchableOpacity onPress={handleNavigateBack}>
           <Icon name="arrow-left" size={20} color="#34cb79" />
@@ -47,7 +48,7 @@ const Points = () => {
               }}>
               <View style={styles.mapMarkerContainer}>
                 <Image style={styles.mapMarkerImage} source={{ uri: "https://images.unsplash.com/photo-1569254631271-fb470f53fa85?ixlib=rb-1.2.1&auto=format&fit=crop&w=640&q=80" }} />
-                <Text style={styles.mapMarkerTitle}>Supermercados São Vicente</Text>
+                <Text style={styles.mapMarkerTitle}>São Vicente</Text>
 
               </View>
             </Marker>
@@ -87,7 +88,7 @@ const Points = () => {
           </TouchableOpacity>
         </ScrollView>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
